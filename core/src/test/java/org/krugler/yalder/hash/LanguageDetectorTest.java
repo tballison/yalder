@@ -430,4 +430,9 @@ public class LanguageDetectorTest {
         return builder.makeModels();
     }
 
+    @Test
+    public void testAll() throws Exception {
+        Collection<BaseLanguageModel> all = ModelLoader.loadAllModelsFromResources();
+        assertEquals(199, all.size());
+    }
 }

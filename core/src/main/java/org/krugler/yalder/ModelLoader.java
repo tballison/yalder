@@ -21,7 +21,11 @@ public class ModelLoader {
     public static String resourceFromLanguage(LanguageLocale lang) {
         return String.format("/org/krugler/yalder/models/core/yalder_model_%s.bin", lang.getISO3LetterName());
     }
-    
+
+    public static String extraResourceFromLanguage(LanguageLocale lang) {
+        return String.format("/org/krugler/yalder/models/extras/yalder_model_%s.bin", lang.getISO3LetterName());
+    }
+
     public static Collection<BaseLanguageModel> loadModelsFromResources() throws IOException {
         Set<BaseLanguageModel> result = new HashSet<>();
         for (LanguageLocale lang : CoreModels.CORE_LANGUAGES) {
@@ -33,6 +37,26 @@ public class ModelLoader {
         
         // TODO use reflection to see if extras jar is on classpath, add those languages.
         
+        return result;
+    }
+
+    public static Collection<BaseLanguageModel> loadAllModelsFromResources() throws IOException {
+        Set<BaseLanguageModel> result = new HashSet<>();
+        for (LanguageLocale lang : CoreModels.CORE_LANGUAGES) {
+            String resource = resourceFromLanguage(lang);
+            try (DataInputStream dis = new DataInputStream(ModelLoader.class.getResourceAsStream(resource))) {
+                result.add(loadBinaryModel(lang, dis));
+            }
+        }
+        for (LanguageLocale lang : CoreModels.EXTRA_LANGUAGES) {
+            String resource = extraResourceFromLanguage(lang);
+            try (DataInputStream dis = new DataInputStream(ModelLoader.class.getResourceAsStream(resource))) {
+                result.add(loadBinaryModel(lang, dis));
+            }
+        }
+
+        // TODO use reflection to see if extras jar is on classpath, add those languages.
+
         return result;
     }
     
